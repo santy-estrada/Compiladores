@@ -64,7 +64,7 @@ lista1 = set([13,69,71,14,250])
 lista2 = set([8,7,5,14,71,13])
 
 print(f"Unión {lista1|lista2}")
-print(f"Intersección {lista1&lista2}")
+print(f"Intersección {lista1 & lista2}")
 print("--------------------")
 
 def nombre(*param) -> int:     #Con * se indica que se pasa una lista de parámetros
