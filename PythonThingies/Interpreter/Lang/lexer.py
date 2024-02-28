@@ -116,7 +116,7 @@ class Lexer:
         elif match(r'^!$', self.current_char):
             if self.peek_character() == "=":
                 self._read_character()
-                token = Token(TokenType.NOE_, "!=")
+                token = Token(TokenType.NOE, "!=")
             else:
                 token = Token(TokenType.NOT, self.current_char)
         elif self.is_letter(self.current_char):

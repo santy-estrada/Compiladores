@@ -37,7 +37,7 @@ class TokenType(Enum):
     INT = auto()  # entero
     LT = auto()  # <
     LTE = auto()  # <=
-    NOE_ = auto()  # !=
+    NOE = auto()  # !=
     NOT = auto()  # !
     PLUS = auto()  # +
     SEMICOLON = auto()  # ;
