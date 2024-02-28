@@ -43,10 +43,12 @@ class Parser:
         self._advance_tokens()
         self._advance_tokens()
     
+    #Avanza los tokens que ha ingresado el usuario
     def _advance_tokens(self) -> None:
         self.current_token = self.peek_token
         self.peek_token = self.lexer.next_token()
-
+        
+    #Crear un programa para ser evaluado por un evaluator
     def parse_program(self) -> Program:
         program:Program = Program(statements=[])
         while self.current_token.token_type != TokenType.EOF:
