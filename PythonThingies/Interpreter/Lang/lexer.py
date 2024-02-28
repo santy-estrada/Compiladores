@@ -97,8 +97,6 @@ class Lexer:
             token = Token(TokenType.COMMA, self.current_char)
         elif match(r'^;$', self.current_char):
             token = Token(TokenType.SEMICOLON, self.current_char)
-        elif match(r'^!$', self.current_char):
-            token = Token(TokenType.NOT, self.current_char)
         elif match(r'^$', self.current_char):
             token = Token(TokenType.EOF, self.current_char)
         elif match(r'^>$', self.current_char):
@@ -140,28 +138,10 @@ class Lexer:
             token = Token(TokenType.DIVISION, self.current_char)
         elif match(r'^\*$', self.current_char):
             token = Token(TokenType.MULTIPLICATION, self.current_char)
-        elif match(r'^<$', self.current_char):
-            if self._peek_character() == "=":
-                self._read_char()
-                token = Token(TokenType.LESSERQ_THAN, "<=")
-            else:
-                token = Token(TokenType.LESS_THAN, self.current_char)
-        elif match(r'^>$', self.current_char):
-            if self._peek_character() == "=":
-                self._read_char()
-                token = Token(TokenType.MOREQ_THAN, ">=")
-            else:
-                token = Token(TokenType.GREATER_THAN, self.current_char)
         elif match(r'^\[$', self.current_char):
             token = Token(TokenType.L_BRACKET, self.current_char)
         elif match(r'^\]$', self.current_char):
             token = Token(TokenType.R_BRACKET, self.current_char)
-        elif match(r'^!$', self.current_char):
-            if self._peek_character() == "=":
-                self._read_char()
-                token = Token(TokenType.NOT_EQ, "!=")
-            else:
-                token = Token(TokenType.NOT, self.current_char)
         else:
             token = Token(TokenType.ILLEGAL, self.current_char)
         self._read_character()
