@@ -1,60 +1,44 @@
 from enum import (
-    Enum,
     auto,
-    unique
-
+    Enum,
+    unique,
 )
 from typing import (
     Dict,
-    NamedTuple
+    NamedTuple,
 )
-
-"""
-Se crea una clase TokenType que contiene los tipos de tokens 
-Cada token es único y su identificador no se repite
-"""
 
 
 @unique
 class TokenType(Enum):
-    ASSIGN = auto()  # =
-    COMMA = auto()  # ,
-    DOT = auto()  # .
-    DIV = auto()  # /
-    FALSE = auto()  # false
-    TRUE = auto()  # true
-    IF = auto()  # if
-    ELSE = auto()  # else
-    FUNCTION = auto()  # function
-    RETURN = auto()  # return
-    EOF = auto()  # nada
-    EQ = auto()  # =
-    GT = auto()  # >
-    GTE = auto()  # >=
-    IDENT = auto()  # identificador
-    LET = auto()  # let
-    ILLEGAL = auto()  # ?
-    INT = auto()  # entero
-    LT = auto()  # <
-    LTE = auto()  # <=
-    NOE = auto()  # !=
-    NOT = auto()  # !
-    PLUS = auto()  # +
-    SEMICOLON = auto()  # ;
-    L_PAREN = auto()  # (
-    R_PAREN = auto()  # )
-    L_BRACE = auto()  # {
-    R_BRACE = auto()  # }
-    MINUS = auto()  # -
-    DIVISION = auto()  # /
-    MULTIPLICATION = auto()  # *
-    LESS_THAN = auto()  # <
-    GREATER_THAN = auto()  # >
-    L_BRACKET = auto()  # [
-    R_BRACKET = auto()  # ]
-    """
-    {,},[,],+,/,(,)^,!,<,>
-    """
+    ASSIGN = auto()
+    COMMA = auto()
+    DIVISION = auto()
+    ELSE = auto()
+    EOF = auto()
+    EQ = auto()
+    FALSE = auto()
+    FUNCTION = auto()
+    GT = auto()
+    IDENT = auto()
+    IF = auto()
+    ILLEGAL = auto()
+    INT = auto()
+    LBRACE = auto()
+    LET = auto()
+    LPAREN = auto()
+    LT = auto()
+    MINUS = auto()
+    MULTIPLICATION = auto()
+    NEGATION = auto()
+    NOT_EQ = auto()
+    PLUS = auto()
+    RBRACE = auto()
+    RETURN = auto()
+    RPAREN = auto()
+    SEMICOLON = auto()
+    STRING = auto()
+    TRUE = auto()
 
 
 class Token(NamedTuple):
@@ -62,20 +46,18 @@ class Token(NamedTuple):
     literal: str
 
     def __str__(self) -> str:
-        return f'{self.token_type.name}:{self.literal}'
+        return f'Type: {self.token_type}, Literal: {self.literal}'
 
 
-def lookup_token_type(token_type: str) -> TokenType:
+def lookup_token_type(literal: str) -> TokenType:
     keywords: Dict[str, TokenType] = {
-        'false': TokenType.FALSE,
-        'true': TokenType.TRUE,
-        'if': TokenType.IF,
-        'else': TokenType.ELSE,
-        'let': TokenType.LET,
-        'function': TokenType.FUNCTION,
-        'return': TokenType.RETURN,
-        'EOF': TokenType.EOF,
-        'ident': TokenType.IDENT,
-        'int': TokenType.INT,
+        'falso': TokenType.FALSE,
+        'procedimiento': TokenType.FUNCTION,
+        'regresa': TokenType.RETURN,
+        'si': TokenType.IF,
+        'si_no': TokenType.ELSE,
+        'variable': TokenType.LET,
+        'verdadero': TokenType.TRUE,
     }
-    return keywords.get(token_type, TokenType.IDENT)
+
+    return keywords.get(literal, TokenType.IDENT)

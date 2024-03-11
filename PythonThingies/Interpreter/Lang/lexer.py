@@ -1,149 +1,142 @@
 from re import match
+
 from Lang.token import (
+    lookup_token_type,
     Token,
     TokenType,
-    lookup_token_type
 )
-
-"""
-El lexer es el que identifica cual token es y luego se pasa para generar el arbol y ser evaluado
-"""
 
 
 class Lexer:
+
     def __init__(self, source: str) -> None:
-        self.source = source
-        self.current_pos = 0
-        self.current_char = ""
-        self._read_current_pos = 0
+        self._source: str = source
+        self._character: str = ''
+        self._read_position: int = 0
+        self._position: int = 0
+
         self._read_character()
 
-    """
-    Se asigna el token y se lee el siguiente caracter
-    """
-
-    def _read_character(self) -> None:
-        if self._read_current_pos >= len(self.source):
-            self.current_char = ""
-        else:
-            self.current_char = self.source[self._read_current_pos]
-        self._current_pos = self._read_current_pos
-        self._read_current_pos += 1
-        """
-        Para evitar espacios en blanco
-        """
-
-    def _skip_whitespace(self) -> None:
-        while self.current_char.isspace():
-            self._read_character()
-
-    """
-    peek_character lee el siguinte caracter sin necesidad 
-    de avanzar en el cursor
-    """
-
-    def peek_character(self) -> str:
-        if self._read_current_pos >= len(self.source):
-            return ""
-        else:
-            return self.source[self._read_current_pos]
-
-    """ para verificar que el caracter sea una letra
-    """
-
-    def is_letter(self, character: str) -> bool:
-        return bool(match(r'^[a-záéíóúA-ZÁÉÍÓÚñÑ_]$', character))
-
-    """Para evaluar si es un número
-    """
-
-    def is_number(self, character: str) -> bool:
-        return bool(match(r'^\d$', character))
-
-    """funcion para retornar si es un número
-    """
-
-    def _read_number(self) -> str:
-        position = self._current_pos
-        while self.is_number(self.current_char):
-            self._read_character()
-        return self.source[position:self._current_pos]
-
-    def _read_identifier(self) -> str:
-        position = self._current_pos
-        # is_first_letter=True
-        while self.is_letter(self.current_char) or \
-                (self.is_number(self.current_char)):
-            self._read_character()
-            is_first_letter = False
-        return self.source[position:self._current_pos]
-
-    """ evalua cata token y devuelve su tipo"""
-
-    def next_token(self):
-
+    def next_token(self) -> Token:
         self._skip_whitespace()
-        if match(r'^=$', self.current_char):
-            if self.peek_character() == "=":
-                self._read_character()
-                token = Token(TokenType.EQ, "==")
 
+        if match(r'^=$', self._character):
+            if self._peek_character() == '=':
+                token = self._make_two_character_token(TokenType.EQ)
             else:
-                token = Token(TokenType.ASSIGN, self.current_char)
-
-        elif match(r'^\+$', self.current_char):
-            token = Token(TokenType.PLUS, self.current_char)
-        elif match(r'^,$', self.current_char):
-            token = Token(TokenType.COMMA, self.current_char)
-        elif match(r'^;$', self.current_char):
-            token = Token(TokenType.SEMICOLON, self.current_char)
-        elif match(r'^$', self.current_char):
-            token = Token(TokenType.EOF, self.current_char)
-        elif match(r'^>$', self.current_char):
-            if self.peek_character() == "=":
-                self._read_character()
-                token = Token(TokenType.GTE, ">=")
+                token = Token(TokenType.ASSIGN, self._character)
+        elif match(r'^\+$', self._character):
+            token = Token(TokenType.PLUS, self._character)
+        elif match(r'^$', self._character):
+            token = Token(TokenType.EOF, self._character)
+        elif match(r'^\($', self._character):
+            token = Token(TokenType.LPAREN, self._character)
+        elif match(r'^\)$', self._character):
+            token = Token(TokenType.RPAREN, self._character)
+        elif match(r'^{$', self._character):
+            token = Token(TokenType.LBRACE, self._character)
+        elif match(r'^}$', self._character):
+            token = Token(TokenType.RBRACE, self._character)
+        elif match(r'^,$', self._character):
+            token = Token(TokenType.COMMA, self._character)
+        elif match(r'^;$', self._character):
+            token = Token(TokenType.SEMICOLON, self._character)
+        elif match(r'^-$', self._character):
+            token = Token(TokenType.MINUS, self._character)
+        elif match(r'^/$', self._character):
+            token = Token(TokenType.DIVISION, self._character)
+        elif match(r'^\*$', self._character):
+            token = Token(TokenType.MULTIPLICATION, self._character)
+        elif match(r'^<$', self._character):
+            token = Token(TokenType.LT, self._character)
+        elif match(r'^>$', self._character):
+            token = Token(TokenType.GT, self._character)
+        elif match(r'^!$', self._character):
+            if self._peek_character() == '=':
+                token = self._make_two_character_token(TokenType.NOT_EQ)
             else:
-                token = Token(TokenType.GT, self.current_char)
-        elif match(r'^<$', self.current_char):
-            if self.peek_character() == "=":
-                self._read_character()
-                token = Token(TokenType.LTE, "<=")
-            else:
-                token = Token(TokenType.LT, self.current_char)
-        elif match(r'^!$', self.current_char):
-            if self.peek_character() == "=":
-                self._read_character()
-                token = Token(TokenType.NOE, "!=")
-            else:
-                token = Token(TokenType.NOT, self.current_char)
-        elif self.is_letter(self.current_char):
+                token = Token(TokenType.NEGATION, self._character)
+        elif self._is_letter(self._character):
             literal = self._read_identifier()
             token_type = lookup_token_type(literal)
+
             return Token(token_type, literal)
-        elif self.is_number(self.current_char):
+        elif self._is_number(self._character):
             literal = self._read_number()
+
             return Token(TokenType.INT, literal)
-        elif match(r'^\($', self.current_char):
-            token = Token(TokenType.L_PAREN, self.current_char)
-        elif match(r'^\)$', self.current_char):
-            token = Token(TokenType.R_PAREN, self.current_char)
-        elif match(r'^\{$', self.current_char):
-            token = Token(TokenType.L_BRACE, self.current_char)
-        elif match(r'^\}$', self.current_char):
-            token = Token(TokenType.R_BRACE, self.current_char)
-        elif match(r'^-$', self.current_char):
-            token = Token(TokenType.MINUS, self.current_char)
-        elif match(r'^/$', self.current_char):
-            token = Token(TokenType.DIVISION, self.current_char)
-        elif match(r'^\*$', self.current_char):
-            token = Token(TokenType.MULTIPLICATION, self.current_char)
-        elif match(r'^\[$', self.current_char):
-            token = Token(TokenType.L_BRACKET, self.current_char)
-        elif match(r'^\]$', self.current_char):
-            token = Token(TokenType.R_BRACKET, self.current_char)
+        elif match(r'^"$', self._character):
+            literal = self._read_string()
+            return Token(TokenType.STRING, literal)
         else:
-            token = Token(TokenType.ILLEGAL, self.current_char)
+            token = Token(TokenType.ILLEGAL, self._character)
+
         self._read_character()
+
         return token
 
+    def _is_letter(self, character: str) -> bool:
+        return bool(match(r'^[a-záéíóúA-ZÁÉÍÓÚñÑ_]$', character))
+
+    def _is_number(self, character: str) -> bool:
+        return bool(match(r'^\d$', character))
+
+    def _make_two_character_token(self, token_type: TokenType) -> Token:
+        prefix = self._character
+        self._read_character()
+        suffix = self._character
+
+        return Token(token_type, f'{prefix}{suffix}')
+
+    def _read_character(self) -> None:
+        if self._read_position >= len(self._source):
+            self._character = ''
+        else:
+            self._character = self._source[self._read_position]
+
+        self._position = self._read_position
+        self._read_position += 1
+
+    def _read_identifier(self) -> str:
+        initial_position = self._position
+
+        is_first_letter = True
+        while self._is_letter(self._character) or \
+                (not is_first_letter and self._is_number(self._character)):
+            self._read_character()
+            is_first_letter = False
+
+        return self._source[initial_position:self._position]
+
+    def _read_number(self) -> str:
+        initial_position = self._position
+
+        while self._is_number(self._character):
+            self._read_character()
+
+        return self._source[initial_position:self._position]
+
+    def _peek_character(self) -> str:
+        if self._read_position >= len(self._source):
+            return ''
+
+        return self._source[self._read_position]
+
+    def _skip_whitespace(self) -> None:
+        while match(r'^\s$', self._character):
+            self._read_character()
+    
+    def _read_string(self) -> str:
+        self._read_character()
+
+        initial_position = self._position
+
+        while self._character != '"' \
+                and self._read_position <= len(self._source):
+            self._read_character()
+
+        string = self._source[initial_position:self._position]
+
+        self._read_character()
+
+        return string

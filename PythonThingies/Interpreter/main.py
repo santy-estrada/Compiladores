@@ -1,14 +1,19 @@
 from Lang.repl import start_repl
-from typing import List
+def imprimir_bienvenida():
+    bienvenida = [
+        "  ***     *   *   ***   *   *     *** ",
+        " *   *   *   *  *   *  *   *    *   *",
+        " *       *****  *      *****    *",
+        " *       *   *  *      *   *     *",
+        " *   *   *   *  *   *  *   *    *   *",
+        "  ***    *   *   ***   *   *     *** "
+    ]
+    for linea in bienvenida:
+        print(linea.center(40, "*"))
 
-def main():
+imprimir_bienvenida()
+def main()->None:
+    imprimir_bienvenida()
     start_repl()
-
-
-if __name__ == "__main__":
+if __name__=='__main__':
     main()
-    
-    lista = ["10","6","7","8","9","1"]
-    
-    strl = "_".join(lista)
-    print(strl)
