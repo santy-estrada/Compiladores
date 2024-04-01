@@ -3,5 +3,5 @@ export default interface Carro{
     model: string,
     year: number,
     color: string,
-    price?: number,
+    price: number,
 }
