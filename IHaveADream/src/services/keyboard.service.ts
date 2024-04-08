@@ -1,4 +1,5 @@
-import {Keyboard} from "../models/teclados.models";
+import { Keyboard } from "../interfaces/Keyboard";
+import KeyboardModel from "../models/teclados.models";
 
 let Keyboards: Keyboard[] = [
     {
@@ -29,17 +30,23 @@ let Keyboards: Keyboard[] = [
         price: 100,
         wireless: false,
     }]
-
-export const getKeyBoards = async() => {
-    return Keyboards;
+export const getKeyboards = async() => {
+    try{
+        const response = await KeyboardModel.find();
+        return response;
+    }catch(error){
+        console.log(error);
+    }
 }
-export const getKeyBoard = async(brand: string) => {
-    return Keyboards.find((keyboard) => keyboard.brand === brand);
+
+export const getKeyboard = async(id: string) => {
+    const response = await KeyboardModel.findOne({_id: id});
+    return response;
 }
 
 export const createKeyboard = async(keyboard:Keyboard)=>{
-    Keyboards.push(keyboard); //Keyboards=[...Keyboards];
-    return keyboard;
+    const responseInsert = await KeyboardModel.create(keyboard);
+    return responseInsert;
 }
 
 export const deleteKeyboard = async(brand: string) => {
