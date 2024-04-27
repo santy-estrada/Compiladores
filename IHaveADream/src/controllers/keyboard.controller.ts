@@ -1,5 +1,6 @@
 import {getKeyboard, getKeyboards, createKeyboard, deleteKeyboard} from "../services/keyboard.service";
 import {Request,Response} from "express";
+import { handlehttp } from "../utils/handlehttps";
 
 export const getKeyboards1 = async(req: Request, res: Response) => {
     const keyboards = await getKeyboards();
@@ -16,6 +17,7 @@ export const createKeyBoard = async(req: Request, res: Response) => {
         const keyboard = await createKeyboard(req.body);
         return res.status(200).send(keyboard);
     }catch(error){
+        handlehttp(res, "La remala")
         return res.status(400).send(error);
     }
     
