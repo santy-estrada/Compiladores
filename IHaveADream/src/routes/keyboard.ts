@@ -5,9 +5,9 @@ import { checkJWT } from "../middleware/login.middleware";
 
 const router = Router();
 
-router.get("/",logMiddleware, getKeyboards1);
+router.get("/", getKeyboards1);
 router.get("/:id",getKeyboard1);
-router.post("/",checkJWT, createKeyBoard);
+router.post("/", createKeyBoard);
 router.delete("/:brand",deleteKeyBoard);
 
 export {router};
